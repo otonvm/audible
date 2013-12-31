@@ -22,6 +22,7 @@ except ImportError as err:
 
 DEBUG = 1
 
+
 def setup_logging():
     if 'sys' not in locals().keys():
         import sys
@@ -95,6 +96,7 @@ def setup_logging():
         def lc(*args):
             raise SystemExit(1)
 
+
 def yn_query(message):
     while True:
         answer = input("{} [Y/n] ".format(message)).strip().lower()
@@ -104,6 +106,7 @@ def yn_query(message):
             return False
         else:
             continue
+
 
 def parse_xml(conf):
     try:
@@ -146,6 +149,7 @@ def parse_xml(conf):
         ld("conf.runtime", conf.runtime)
         ld("conf.description", conf.description)
         ld("conf.copyright", conf.copyright)
+
 
 def parse_url(conf):
     metadata = lib_audible.Metadata()
@@ -201,6 +205,7 @@ def parse_url(conf):
     conf.copyright = metadata.copyright
     ld("conf.copyright", conf.copyright)
 
+
 def write_xml(conf):
     root = ET.Element("audiobook")
 
@@ -236,6 +241,7 @@ def write_xml(conf):
     tree = ET.ElementTree(root)
 
     tree.write(conf.metadata_xml, encoding="unicode", xml_declaration=True)
+
 
 def main(argv):
     ld("argv", argv)
@@ -291,6 +297,7 @@ def main(argv):
             parse_url(conf)
             #write metadata to an xml file:
             write_xml(conf)
+
 
 if __name__ == "__main__":
     if DEBUG:
