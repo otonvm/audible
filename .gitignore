@@ -1,0 +1,15 @@
+.project
+.pydevproject
+.settings
+*.pyc
+*.pyo
+__pycache__
+
+.svn
+.hg
+
+*~
+*.lock
+*.DS_Store
+*.swp
+*.out
