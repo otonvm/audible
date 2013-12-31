@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<audiobook>
+    <title>book title</title>
+    <authors>
+        <name>author 1</name>
+        <name>author 2</name>
+    </authors>
+    <narrators>
+        <name>narrator 1</name>
+        <name>narrator 2</name>
+    </narrators>
+    <series>
+        <title>series title</title>
+        <position>3</position>
+    </series>
+    <runtime>8888</runtime>
+    <description>very long description</description>
+    <copyright>©2013 qwert; Ⓟ2013 asdfg</copyright>
+</audiobook>
