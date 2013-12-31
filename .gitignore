@@ -5,6 +5,8 @@
 *.pyo
 __pycache__
 
+debug.log
+
 .svn
 .hg
 

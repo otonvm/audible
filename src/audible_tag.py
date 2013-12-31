@@ -7,7 +7,6 @@ __updated__ = "29.12.2013"
 import os
 import sys
 import xml.etree.ElementTree as ET
-import xml.dom.minidom as dom
 
 try:
     import lib.lib_argparse as lib_argparse
@@ -16,8 +15,8 @@ try:
     import lib.lib_exceptions as lib_exceptions
     import config
 except ImportError as err:
-    print("Cannot start module {}.".format(__file__), file=sys.stderr)
-    print("Reason: {}.".format(err.msg), file=sys.stderr)
+    print("Cannot start module {}".format(__file__), file=sys.stderr)
+    print("Reason: {}".format(err.msg), file=sys.stderr)
     raise SystemExit(1)
 
 DEBUG = 1
@@ -245,7 +244,7 @@ def write_xml(conf):
 
 def main(argv):
     ld("argv", argv)
-
+    ld(sys.path)
     program_version = "v{}".format(__version__)
     program_build_date = str(__updated__)
     program_version_message = "{}, built {}".format(program_version, program_build_date)
@@ -262,10 +261,15 @@ def main(argv):
     #parse arguments:
     #get folder contents:
     conf.input_folder = args.input_folder
-    folder_contents = lib_tree.Parse(conf.input_folder)
-    ld("folder_contents", folder_contents)
+    try:
+        folder_contents = lib_tree.Parse(conf.input_folder)
+        ld("folder_contents", folder_contents)
+    except lib.lib_exceptions.FolderNotFound as err:
+        lc("Error parsing input folder: {}".format(err.msg))
+
     conf.audio_files = folder_contents.audio_files
     ld("conf.audio_files", conf.audio_files)
+
     conf.cover = folder_contents.cover
     ld("conf.cover", conf.cover)
 

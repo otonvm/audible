@@ -16,3 +16,7 @@ class RegExException(Exception):
 
 class FileError(Exception):
     pass
+
+
+class FolderNotFound(Exception):
+    pass
