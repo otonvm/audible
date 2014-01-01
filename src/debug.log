@@ -1,1 +1,1 @@
-file: audible_tag.py | DEBUG, line 254: Namespace(input_cover=None, input_folder='/Users/Oton/Desktop/Audible/Audible/test_ab', input_xml=None, url='http://www.audible.com/pd/Sci-Fi-Fantasy/A-Quest-of-Heroes-Audiobook/B00F9DZV3Y/ref=a_cat_Sci-F_c6_1_t', verbose=False)
+file: audible_tag.py | DEBUG, line 264: conf.cover: /Users/Oton/Dropbox/Code/Eclipse_Mac/Audible/src/cover.png
