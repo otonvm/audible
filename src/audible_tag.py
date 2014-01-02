@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!python3
 # -*- coding: utf-8 -*-
 
 __version__ = "0.3"
@@ -13,6 +13,7 @@ try:
     import lib.lib_audible as lib_audible
     import lib.lib_tree as lib_tree
     import lib.lib_exceptions as lib_exceptions
+    import lib.lib_utils as lib_utils
     import config
 except ImportError as err:
     print("Cannot start module {}".format(__file__), file=sys.stderr)
@@ -94,17 +95,6 @@ def setup_logging():
         def le(*args): pass
         def lc(*args):
             raise SystemExit(1)
-
-
-def yn_query(message):
-    while True:
-        answer = input("{} [Y/n] ".format(message)).strip().lower()
-        if answer == 'y' or '':
-            return True
-        elif answer == 'n':
-            return False
-        else:
-            continue
 
 
 def parse_xml(conf):
@@ -264,7 +254,8 @@ def main(argv):
     try:
         folder_contents = lib_tree.Parse(conf.input_folder)
         ld("folder_contents", folder_contents)
-    except lib.lib_exceptions.FolderNotFound as err:
+    except lib_exceptions.FolderNotFound as err:
+        print(dir(err))
         lc("Error parsing input folder: {}".format(err.msg))
 
     conf.audio_files = folder_contents.audio_files
@@ -276,31 +267,28 @@ def main(argv):
     if not conf.cover:
         lw("No cover files specified or found. No artwork will be used.")
 
-    #get metadata from either xml file or url:
-    if args.input_xml:
+    #default metadata.xml that could/should exist:
+    conf.metadata_xml = os.path.join(args.input_folder, "metadata.xml")
+
+    #get metadata from either existing xml file or url:
+    if args.input_xml:  # takes precendence
         conf.metadata_xml = args.input_xml
         ld("conf.metadata_xml", conf.metadata_xml)
         parse_xml(conf)
 
+    #check if an xml file already exists:
+    elif os.path.exists(conf.metadata_xml):
+        li("A metadata.xml file found.")
+        if lib_utils.yn_query("Would you like to use that?"):
+            parse_xml(conf)
+
+    #no xml files exist, parse url: TODO: add a --force option
     else:
-        #default metadata.xml that could/should exist:
-        conf.metadata_xml = os.path.join(args.input_folder, "metadata.xml")
-
-        #check if an xml file already exists:
-        if os.path.exists(conf.metadata_xml):
-            li("A metadata.xml file found.")
-
-            if yn_query("Would you like to use that?"):
-                parse_xml(conf)
-
-        #no xml files exist, parse url:
-        #TODO: add a --force option
-        else:
-            conf.url = args.url
-            ld("conf.url", conf.url)
-            parse_url(conf)
-            #write metadata to an xml file:
-            write_xml(conf)
+        conf.url = args.url
+        ld("conf.url", conf.url)
+        parse_url(conf)
+        #write metadata to an xml file:
+        write_xml(conf)
 
 
 if __name__ == "__main__":
@@ -308,13 +296,6 @@ if __name__ == "__main__":
         setup_logging()
         set_log_level('debug')
         sys.argv.append('-v')
-        sys.argv.append('-i')
-        sys.argv.append("/Users/Oton/Desktop/Audible/Audible/test_ab")
-        sys.argv.append('-u')
-        #sys.argv.append("http://www.audible.com/pd/Sci-Fi-Fantasy/The-Adversary-Audiobook/B00G3L6PZY/ref=a_series_c2_3_saTtl")
-        sys.argv.append("http://www.audible.com/pd/Sci-Fi-Fantasy/A-Quest-of-Heroes-Audiobook/B00F9DZV3Y/ref=a_cat_Sci-F_c6_1_t")
-        #sys.argv.append('-x')
-        #sys.argv.append("/Users/Oton/Desktop/Audible/Audible/test_ab/meta.xml")
     else:
         setup_logging()
         set_log_level('error')
