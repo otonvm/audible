@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!python3
 # -*- coding: utf-8 -*-
 
 __version__ = "0.3"
@@ -6,6 +6,7 @@ __updated__ = "29.12.2013"
 
 import os
 import sys
+import shutil
 import xml.etree.ElementTree as ET
 
 try:
@@ -266,26 +267,31 @@ def main(argv):
     if not conf.cover:
         lw("No cover files specified or found. No artwork will be used.")
 
+    #default metadata.xml that could/should exist:
+    conf.metadata_xml = os.path.join(args.input_folder, "metadata.xml")
+
     #get metadata from either xml file or url:
     if args.input_xml:
         conf.metadata_xml = args.input_xml
         ld("conf.metadata_xml", conf.metadata_xml)
+
+        try:
+            shutil.move(conf.metadata_xml, os.path.join(conf.metadata_xml, ".bak"))
+        except FileNotFoundError:
+            pass
+
         parse_xml(conf)
 
-    else:
-        #default metadata.xml that could/should exist:
-        conf.metadata_xml = os.path.join(args.input_folder, "metadata.xml")
+    #check if an xml file already exists:
+    if os.path.exists(conf.metadata_xml):
+        li("A metadata.xml file found.")
 
-        #check if an xml file already exists:
-        if os.path.exists(conf.metadata_xml):
-            li("A metadata.xml file found.")
+        if lib_utils.yn_query("Would you like to use that?"):
+            parse_xml(conf)
 
-            if lib_utils.yn_query("Would you like to use that?"):
-                parse_xml(conf)
-
-        #no xml files exist, parse url:
         #TODO: add a --force option
         else:
+
             conf.url = args.url
             ld("conf.url", conf.url)
             parse_url(conf)
@@ -298,13 +304,6 @@ if __name__ == "__main__":
         setup_logging()
         set_log_level('debug')
         sys.argv.append('-v')
-        sys.argv.append('-i')
-        sys.argv.append("/Users/Oton/Dropbox/Code/Eclipse_Mac/Audible/test_ab")
-        sys.argv.append('-u')
-        #sys.argv.append("http://www.audible.com/pd/Sci-Fi-Fantasy/The-Adversary-Audiobook/B00G3L6PZY/ref=a_series_c2_3_saTtl")
-        sys.argv.append("http://www.audible.com/pd/Sci-Fi-Fantasy/A-Quest-of-Heroes-Audiobook/B00F9DZV3Y/ref=a_cat_Sci-F_c6_1_t")
-        #sys.argv.append('-x')
-        #sys.argv.append("/Users/Oton/Desktop/Audible/Audible/test_ab/meta.xml")
     else:
         setup_logging()
         set_log_level('error')

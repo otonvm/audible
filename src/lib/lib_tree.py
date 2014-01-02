@@ -1,6 +1,6 @@
 import os
 import sys
-import lib.lib_exceptions
+import lib.lib_exceptions as lib_exceptions
 
 class Parse:
     """
@@ -82,7 +82,7 @@ class Parse:
             #sort the list of files alphabetically:
             self._file_list.sort()
         else:
-            raise lib.lib_exceptions.FolderNotFound("Cannot find folder!") from None
+            raise lib_exceptions.FolderNotFound("Cannot find folder!") from None
 
     @property
     def audio_files(self):
