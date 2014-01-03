@@ -1,11 +1,11 @@
 [MESSAGES CONTROL]
 # Disable the message(s) with the given id(s).
-#disable-msg=C0323,W0142
+#disable-msg=E501
 
 # Enable all checker(s) except those with the given id(s). This option conflict
 # with the disable-checker option
-disable-checker=line-too-long
+#disable-checker=line-too-long,fixme
 
 [REPORTS]
-output-format=colorized
+#output-format=colorized
 

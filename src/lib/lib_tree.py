@@ -1,6 +1,6 @@
 import os
-import sys
 import lib.lib_exceptions as lib_exceptions
+
 
 class Parse:
     """

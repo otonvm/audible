@@ -1,5 +1,6 @@
-#!python3
+#! python3
 # -*- coding: utf-8 -*-
+# pylint: disable=fixme, line-too-long
 
 __version__ = "0.3"
 __updated__ = "29.12.2013"
@@ -230,7 +231,7 @@ def write_xml(conf):
 
     tree = ET.ElementTree(root)
 
-    tree.write(conf.metadata_xml, encoding="unicode", xml_declaration=True)
+    tree.write(conf.metadata_xml, encoding="utf-8", xml_declaration=True)
 
 
 def main(argv):
@@ -287,16 +288,18 @@ def main(argv):
         li("A metadata.xml file found.")
 
         if lib_utils.yn_query("Would you like to use that?"):
-            parse_xml(conf)
+            parse_xml(conf) #TODO: malformed xml
 
         #TODO: add a --force option
         else:
-
             conf.url = args.url
             ld("conf.url", conf.url)
             parse_url(conf)
+
             #write metadata to an xml file:
             write_xml(conf)
+
+    #simple text editor to display and edit metadata:
 
 
 if __name__ == "__main__":
@@ -312,4 +315,3 @@ if __name__ == "__main__":
         sys.exit(main(sys.argv))
     except KeyboardInterrupt:
         sys.exit(1)
-

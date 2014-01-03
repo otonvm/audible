@@ -1,8 +1,10 @@
-#!/usr/bin/env python3
+#! python3
 # -*- coding: utf-8 -*-
+
 
 def get_input(message):
     return input(message).strip().lower()
+
 
 def yn_query(message):
     while True:

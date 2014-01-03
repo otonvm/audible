@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#! python3
 # -*- coding: utf-8 -*-
 
 import urllib.request
@@ -19,10 +19,11 @@ except ImportError:
     raise ImportError("Unable to import BeautifulSoup!") from None
 
 try:
-    import html5lib #used by bs, not needed directly
+    import html5lib  # used by bs, not needed directly
 except ImportError:
     raise ImportError("Unable to import html5lib!") from None
 del html5lib
+
 
 class Metadata:
     def __init__(self):
