@@ -11,15 +11,29 @@ class Editor:
 
         self._conf = conf
 
+        self._build_list()
+
         self._insert_line()
 
         number = 1
-        self._print_info(number, "Title", conf.title)
-        for author in conf.authors:
-            self._print_info(number, "Author", author)
+        for item in self._meta_list:
+            self._print_info(number, title=item[0], text=item[1])
+            number += 1
+
+        self._insert_line()
+
+    def _build_list(self):
+        self._meta_list = [("Title", self._conf.title),
+                           ("Authors", self._conf.authors),
+                           ("Narrators", self._conf.narrators),
+                           ("Series", self._conf.series_title),
+                           ("Book Nº", self._conf.series_position),
+                           ("Description", self._conf.description),
+                           ("Copyright", self._conf.copyright)]
 
     def _insert_line(self, symbol='=', width=100):
-        print(symbol*width)
+        print(symbol * width)
+
 
     def _print_info(self, number, title, text, width=100):
         string = "{}) {}: {}".format(number, title, text)

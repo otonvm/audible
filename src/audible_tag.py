@@ -16,6 +16,7 @@ try:
     import lib.lib_tree as lib_tree
     import lib.lib_exceptions as lib_exceptions
     import lib.lib_utils as lib_utils
+    import lib.lib_editor as lib_editor
     import config
 except ImportError as err:
     print("Cannot start module {}".format(__file__), file=sys.stderr)
@@ -277,7 +278,8 @@ def main(argv):
         ld("conf.metadata_xml", conf.metadata_xml)
 
         try:
-            shutil.move(conf.metadata_xml, os.path.join(conf.metadata_xml, ".bak"))
+            shutil.copyfile(conf.metadata_xml, "{}.bak".format(conf.metadata_xml))
+            #shutil.move(conf.metadata_xml, "{}.bak".format(conf.metadata_xml))
         except FileNotFoundError:
             pass
 
@@ -291,7 +293,7 @@ def main(argv):
             parse_xml(conf) #TODO: malformed xml
 
         #TODO: add a --force option
-        else:
+        elif args.url:
             conf.url = args.url
             ld("conf.url", conf.url)
             parse_url(conf)
@@ -299,8 +301,18 @@ def main(argv):
             #write metadata to an xml file:
             write_xml(conf)
 
-    #simple text editor to display and edit metadata:
+        else:
+            le("No URL specified.")
+            raise SystemExit(1)
 
+    elif args.url:
+        conf.url = args.url
+        ld("conf.url", conf.url)
+        parse_url(conf)
+        write_xml(conf)
+
+    #simple text editor to display and edit metadata:
+    lib_editor.Editor(conf)
 
 if __name__ == "__main__":
     if DEBUG:
