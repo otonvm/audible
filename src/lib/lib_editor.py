@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import textwrap
+import lib.lib_utils as lib_utils
 from config import Config
 
 class Editor:
@@ -10,22 +11,47 @@ class Editor:
             raise AssertionError("conf must be and instance of Config class.") from None
 
         self._conf = conf
+        self._meta_list = list()
 
+        #create a list of tuples with entries to edit:
         self._build_list()
+
+        #clear the screen:
+        if not conf.debug:
+            lib_utils.clear()
 
         self._insert_line()
 
+        #number to use for selection and display
         number = 1
         for item in self._meta_list:
+            #print entries to screen:
             self._print_info(number, title=item[0], text=item[1])
             number += 1
 
         self._insert_line()
 
+        number -= 1
+        while True:
+            if lib_utils.yn_query("Do you wish to edit an entry?"):
+                selection = self._prompt(number)
+
+                self._edit(selection)
+            else:
+                break
+
     def _build_list(self):
+        #extract authors from list and create a readable string:
+        authors = self._conf.authors
+        authors_string = ', '.join([author for author in authors])
+
+        #same for narrators:
+        narrators = self._conf.narrators
+        narrators_string = ', '.join([narrator for narrator in narrators])
+
         self._meta_list = [("Title", self._conf.title),
-                           ("Authors", self._conf.authors),
-                           ("Narrators", self._conf.narrators),
+                           ("Authors", authors_string),
+                           ("Narrators", narrators_string),
                            ("Series", self._conf.series_title),
                            ("Book Nº", self._conf.series_position),
                            ("Description", self._conf.description),
@@ -34,108 +60,57 @@ class Editor:
     def _insert_line(self, symbol='=', width=100):
         print(symbol * width)
 
-
     def _print_info(self, number, title, text, width=100):
         string = "{}) {}: {}".format(number, title, text)
         print(textwrap.fill(string, width=width))
 
+    def _prompt(self, number):
+        while True:
+            answer = input("Enter a number from 1-{} to edit that entry: ".format(number))
 
-if __name__ == "__main__":
-    c = Config()
-    c.title = "title"
-    c.authors = ["ss", "dd"]
-    e = Editor(c)
+            try:
+                answer = int(answer)
 
-# import platform
-#
-# if platform.system() == 'Windows':
-#     from msvcrt import getwch, putwch
-# elif platform.system() == 'Darwin':
-#     import lib.readline_mac.readline as readline
-# else:
-#     raise ImportError("Cannot import readline module on this system.") from None
-#
-#
-# class InputWithText:
-#     def __init__(self, prompt, default):
-#         self._prompt = prompt
-#         self._default = default
-#
-#         try:
-#             _setup_win()
-#         except ImportError:
-#             #TODO: dummy function
-#             pass
-#
-#     def __call__(self):
-#         pass
-#
-#     def _setup_win(self):
-#         from msvcrt import getwch, putwch
-#
-#     def _setup_mac(self):
-#         import lib.readline_mac.readline as readline
-#
-# class _Widows:
-#
-# # def input_with_text(prompt, default):
-# #     def pre_input_hook():
-# #         readline.insert_text(default)
-# #         #readline.redisplay()
-# #
-# #     readline.set_pre_input_hook(pre_input_hook)
-# #     try:
-# #         return input(prompt)
-# #     finally:
-# #         readline.set_pre_input_hook(None)
-# #
-# # if __name__ == "__main__":
-# #     print(dir(readline))
-# #     i = input_with_text("prompt:", "default")
-# #     print(i)
-# #
-#
-#
-# def putstr(string):
-#     for char in string:
-#         putwch(char)
-#
-#
-# def input_with_text(prompt, default=None):
-#     putstr(prompt)
-#
-#     if default is None:
-#         data = []
-#     else:
-#         data = list(default)
-#         putstr(data)
-#
-#     while True:
-#         char = getwch()
-#
-#         if char in '\r\n':
-#             break
-#         # Ctrl-C
-#         elif char == '\003':
-#             putstr('\r\n')
-#             raise KeyboardInterrupt
-#         # Backspace
-#         elif char == '\b':
-#             if data:
-#                 # Backspace and wipe the character cell
-#                 putstr('\b \b')
-#                 data.pop()
-#         # Special keys
-#         elif char in '\0\xe0':
-#             getwch()
-#         else:
-#             putwch(char)
-#             data.append(char)
-#
-#     putstr('\r\n')
-#
-#     return ''.join(data)
-#
-# if __name__ == "__main__":
-#     i = input_with_text("prompt:", "default")
-#     print(i)
+                if answer <= number:
+                    return answer
+                else:
+                    continue
+            except ValueError:
+                continue
+
+    def _edit(self, number):
+        def get_edit(number):
+            return input("{}: ".format(self._meta_list[number-1][0]))
+
+        if number == 1:
+            title = get_edit(1)
+            self._conf.title = title
+
+        if number == 2:
+            authors_string = get_edit(2)
+            authors_list = authors_string.split(sep=', ')
+
+            self._conf.authors = authors_list
+
+        if number == 3:
+            narrators_string = get_edit(3)
+            narrators_list = narrators_string.split(sep=', ')
+
+            self._conf.narrators = narrators_list
+
+        if number == 4:
+            series_title = get_edit(4)
+            self._conf.series_title = series_title
+
+        if number == 5:
+            series_position = get_edit(5)
+            self._conf.series_position = series_position
+
+        if number == 6:
+            description = get_edit(6)
+            self._conf.description = description
+
+        if number == 7:
+            copyright = get_edit(7)
+            self._conf.copyright = copyright
+

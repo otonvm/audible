@@ -1,0 +1,20 @@
+Supported iTunes tag modifiers:
+        album_artist    usage: album_artist=album artist
+        album           usage: album=name
+        tracknum        usage: track=x/N
+        track           usage: track=name
+        artist          usage: artist=name
+        comment         usage: comment=any comment
+        compilation     usage: compilation=yes,no
+        composer        usage: composer=name
+        created         usage: created=time
+        disk            usage: disk=x/N
+        tool            usage: tool=name
+        genre           usage: genre=name
+        name            usage: name=name
+        tempo           usage: tempo=integer
+        writer          usage: writer=name
+        group           usage: group=name
+        cover           usage: cover=file.jpg,file.png
+        encoder         usage: encoder=name
+        gapless         usage: gapless=yes,no

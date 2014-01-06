@@ -1,22 +1,34 @@
 class HTTPException(Exception):
-    pass
+    def __init__(self, msg):
+        super().__init__(msg)
+        self.msg = msg
 
 
 class URLException(Exception):
-    pass
+    def __init__(self, msg):
+        super().__init__(msg)
+        self.msg = msg
 
 
 class BS4Exception(Exception):
-    pass
+    def __init__(self, msg):
+        super().__init__(msg)
+        self.msg = msg
 
 
 class RegExException(Exception):
-    pass
+    def __init__(self, msg):
+        super().__init__(msg)
+        self.msg = msg
 
 
 class FileError(Exception):
-    pass
+    def __init__(self, msg):
+        super().__init__(msg)
+        self.msg = msg
 
 
 class FolderNotFound(Exception):
-    pass
+    def __init__(self, msg):
+        super().__init__(msg)
+        self.msg = msg

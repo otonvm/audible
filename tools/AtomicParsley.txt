@@ -1,0 +1,138 @@
+AtomicParsley Shield Fork:
+https://bitbucket.org/shield007/atomicparsley
+
+AtomicParsley help page for setting iTunes-style metadata into MPEG-4 files. 
+              (3gp help available with AtomicParsley --3gp-help)
+          (ISO copyright help available with AtomicParsley --ISO-help)
+      (reverse DNS form help available with AtomicParsley --reverseDNS-help)
+Usage: AtomicParsley [mp4FILE]... [OPTION]... [ARGUMENT]... [ [OPTION2]...[ARGUMENT2]...] 
+
+example: AtomicParsley /path/to.mp4 -e ~/Desktop/pix
+example: AtomicParsley /path/to.mp4 --podcastURL "http://www.url.net" --tracknum 45/356
+example: AtomicParsley /path/to.mp4 --copyright "℗ © 2006"
+example: AtomicParsley /path/to.mp4 --year "2006-07-27T14:00:43Z" --purchaseDate timestamp
+example: AtomicParsley /path/to.mp4 --sortOrder artist "Mighty Dub Cats, The
+------------------------------------------------------------------------------------------------
+  Extract any pictures in user data "covr" atoms to separate files. 
+  --extractPix       ,  -E                     Extract to same folder (basename derived from file).
+  --extractPixToPath ,  -e  (/path/basename)   Extract to specific path (numbers added to basename).
+                                                 example: --e ~/Desktop/SomeText
+                                                 gives: SomeText_artwork_1.jpg  SomeText_artwork_2.png
+                                               Note: extension comes from embedded image file format
+------------------------------------------------------------------------------------------------
+ Tag setting options:
+
+  --artist           ,  -a   (str)    Set the artist tag: "moov.udta.meta.ilst.©ART.data"
+  --title            ,  -s   (str)    Set the title tag: "moov.udta.meta.ilst.©nam.data"
+  --album            ,  -b   (str)    Set the album tag: "moov.udta.meta.ilst.©alb.data"
+  --genre            ,  -g   (str)    Set the genre tag: "©gen" (custom) or "gnre" (standard).
+                                          see the standard list with "AtomicParsley --genre-list"
+  --tracknum         ,  -k   (num)[/tot]  Set the track number (or track number & total tracks).
+  --disk             ,  -d   (num)[/tot]  Set the disk number (or disk number & total disks).
+  --comment          ,  -c   (str)    Set the comment tag: "moov.udta.meta.ilst.©cmt.data"
+  --year             ,  -y   (num|UTC)    Set the year tag: "moov.udta.meta.ilst.©day.data"
+                                          set with UTC "2006-09-11T09:00:00Z" for Release Date
+  --lyrics           ,  -l   (str)    Set the lyrics tag: "moov.udta.meta.ilst.©lyr.data"
+  --lyricsFile       ,       (/path)  Set the lyrics tag to the content of a file
+  --composer         ,  -w   (str)    Set the composer tag: "moov.udta.meta.ilst.©wrt.data"
+  --copyright        ,  -x   (str)    Set the copyright tag: "moov.udta.meta.ilst.cprt.data"
+  --grouping         ,  -G   (str)    Set the grouping tag: "moov.udta.meta.ilst.©grp.data"
+  --artwork          ,  -A   (/path)  Set a piece of artwork (jpeg or png) on "covr.data"
+                                          Note: multiple pieces are allowed with more --artwork args
+  --bpm              ,  -B   (num)    Set the tempo/bpm tag: "moov.udta.meta.ilst.tmpo.data"
+  --albumArtist      ,  -A   (str)    Set the album artist tag: "moov.udta.meta.ilst.aART.data"
+  --compilation      ,  -C   (bool)   Sets the "cpil" atom (true or false to delete the atom)
+  --hdvideo          ,  -V   (number|bool) Sets the "hdvd" atom (false=delete atom,true=720p,0=sd, 1=720p, 2=1080p etc...)
+  --advisory         ,  -y   (1of3)   Sets the iTunes lyrics advisory ('remove', 'clean', 'explicit') 
+  --stik             ,  -S   (1of7)   Sets the iTunes "stik" atom (--stik "remove" to delete) 
+                                           "Movie", "Normal", "TV Show" .... others: 
+                                           see the full list with "AtomicParsley --stik-list"
+                                           or set in an integer value with --stik value=(num)
+                                      Note: --stik Audiobook will change file extension to '.m4b'
+  --description      ,  -p   (str)    Sets the description on the "desc" atom
+  --Rating           ,       (str)    Sets the Rating on the "rate" atom
+  --longdesc         ,  -j   (str)    Sets the long description on the "ldes" atom
+  --storedesc        ,       (str)    Sets the iTunes store description on the "sdes" atom
+  --TVNetwork        ,  -n   (str)    Sets the TV Network name on the "tvnn" atom
+  --TVShowName       ,  -H   (str)    Sets the TV Show name on the "tvsh" atom
+  --TVEpisode        ,  -I   (str)    Sets the TV Episode on "tven":"209", but it is a string: "209 Part 1"
+  --TVSeasonNum      ,  -U   (num)    Sets the TV Season number on the "tvsn" atom
+  --TVEpisodeNum     ,  -N   (num)    Sets the TV Episode number on the "tves" atom
+  --podcastFlag      ,  -f   (bool)   Sets the podcast flag (values are "true" or "false")
+  --category         ,  -q   (str)    Sets the podcast category; typically a duplicate of its genre
+  --keyword          ,  -K   (str)    Sets the podcast keyword; invisible to MacOSX Spotlight
+  --podcastURL       ,  -L   (URL)    Set the podcast feed URL on the "purl" atom
+  --podcastGUID      ,  -J   (URL)    Set the episode's URL tag on the "egid" atom
+  --purchaseDate     ,  -D   (UTC)    Set Universal Coordinated Time of purchase on a "purd" atom
+                                       (use "timestamp" to set UTC to now; can be akin to id3v2 TDTG tag)
+  --encodingTool     ,       (str)    Set the name of the encoder on the "©too" atom
+  --encodedBy        ,       (str)    Set the name of the Person/company who encoded the file on the "©enc" atom
+  --apID             ,  -Y   (str)    Set the name of the Account Name on the "apID" atom
+  --cnID             ,       (num)    Set iTunes Catalog ID, used for combining SD and HD encodes in iTunes on the "cnID" atom
+
+                                      To combine you must set "hdvd" atom on one file and must have same "stik" on both file
+                                      Must not use "stik" of value Movie(0), use Short Film(9)
+
+                                      iTunes Catalog numbers can be obtained by finding the item in the iTunes Store.  Once item
+                                      is found in the iTunes Store right click on picture of item and select copy link.  Paste this link
+                                      into a document or web browser to display the catalog number ID.
+
+                                      An example link for the video Street Kings is:
+                                      http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewMovie?id=278743714&s=143441
+                                      Here you can see the cnID is 278743714
+
+                                      Alternatively you can use iMDB numbers, however these will not match the iTunes catalog.
+
+  --plID             ,       (num)    Set iTunes Playlist ID, aka CollectionID. See http://itunes.apple.com/lookup?entity=tvShow&id=474729200
+  --geID             ,       (num)    Set iTunes Genre ID.  This does not necessarily have to match genre.
+                                      See --genre-movie-id-list and --genre-tv-id-list
+
+  --xID              ,       (str)    Set iTunes vendor-supplied xID, used to allow iTunes LPs and iTunes Extras to interact 
+                                            with other content in your iTunes Library
+  --gapless          ,       (bool)   Sets the gapless playback flag for a track in a gapless album
+  --sortOrder    (type)      (str)    Sets the sort order string for that type of tag.
+                                       (available types are: "name", "artist", "albumartist",
+                                        "album", "composer", "show")
+  --flavour          ,        (str)   Sets the "flvr" atom. Example values are "4:640x480LC-128", "6:640x480LC-256", "7:720p" and "18:1080p"
+
+NOTE: Except for artwork, only 1 of each tag is allowed; artwork allows multiple pieces.
+NOTE: Tags that carry text(str) have a limit of 255 utf8 characters;
+however lyrics and long descriptions have no limit.
+------------------------------------------------------------------------------------------------
+ To delete a single atom, set the tag to null (except artwork):
+  --artist "" --lyrics ""
+  --artwork REMOVE_ALL 
+  --metaEnema        ,  -P            Douches away every atom under "moov.udta.meta.ilst" 
+  --foobar2000Enema  ,  -2            Eliminates foobar2000's non-compliant so-out-o-spec tagging scheme
+  --manualAtomRemove "some.atom.path" where some.atom.path can be:
+      keys to using manualAtomRemove:
+         ilst.ATOM.data or ilst.ATOM target an iTunes-style metadata tag
+         ATOM:lang=foo               target an atom with this language setting; like 3gp assets
+         ATOM.----.name:[foo]        target a reverseDNS metadata tag; like iTunNORM
+                                     Note: these atoms show up with 'AP -t' as: Atom "----" [foo]
+                                         'foo' is actually carried on the 'name' atom
+         ATOM[x]                     target an atom with an index other than 1; like trak[2]
+         ATOM.uuid=hex-hex-hex-hex   targt a uuid atom with the uuid of hex string representation
+    examples:
+        moov.udta.meta.ilst.----.name:[iTunNORM]      moov.trak[3].cprt:lang=urd
+        moov.trak[2].uuid=55534d54-21d2-4fce-bb88-695cfac9c740
+------------------------------------------------------------------------------------------------
+                   Environmental Variables (affecting picture placement)
+
+  set PIC_OPTIONS in your shell to set these flags; preferences are separated by colons (:)
+
+ MaxDimensions=num (default: 0; unlimited); sets maximum pixel dimensions
+ DPI=num           (default: 72); sets dpi
+ MaxKBytes=num     (default: 0; unlimited);  maximum kilobytes for file (jpeg only)
+ AddBothPix=bool   (default: false); add original & converted pic (for archival purposes)
+ AllPixJPEG | AllPixPNG =bool (default: false); force conversion to a specific picture format
+ SquareUp          (include to square images to largest dimension, allows an [ugly] 160x1200->1200x1200)
+ removeTempPix     (include to delete temp pic files created when resizing images after tagging)
+ ForceHeight=num   (must also specify width, below) force image pixel height
+ ForceWidth=num    (must also specify height, above) force image pixel width
+
+ Examples: (bash-style)
+ export PIC_OPTIONS="MaxDimensions=400:DPI=72:MaxKBytes=100:AddBothPix=true:AllPixJPEG=true"
+ export PIC_OPTIONS="SquareUp:removeTempPix"
+ export PIC_OPTIONS="ForceHeight=999:ForceWidth=333:removeTempPix"
+------------------------------------------------------------------------------------------------

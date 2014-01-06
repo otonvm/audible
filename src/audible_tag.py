@@ -1,6 +1,6 @@
 #! python3
 # -*- coding: utf-8 -*-
-# pylint: disable=fixme, line-too-long
+# pylint: disable=fixme, line-too-long, global-variable-not-assigned
 
 __version__ = "0.3"
 __updated__ = "29.12.2013"
@@ -26,6 +26,15 @@ except ImportError as err:
 DEBUG = 1
 
 
+#define global names for logging:
+def set_log_level(*args): pass
+def ld(*args): pass
+def li(*args): pass
+def lw(*args): pass
+def le(*args): pass
+def lc(*args):
+    raise SystemExit(1)
+
 def setup_logging():
     if 'sys' not in locals().keys():
         import sys
@@ -39,7 +48,7 @@ def setup_logging():
         print("Cannot import logger module because: {}. Logging disabled.".format(err.msg), file=sys.stderr)
         enabled = False
 
-    #set global names:
+    #set global names for logging:
     global set_log_level
     global ld
     global li
@@ -132,7 +141,7 @@ def parse_xml(conf):
         if child.tag == 'copyright':
             conf.copyright = child.text
 
-    if DEBUG:
+    if conf.debug:
         ld("conf.title", conf.title)
         ld("conf.authors", conf.authors)
         ld("conf.narrators", conf.narrators)
@@ -191,6 +200,9 @@ def parse_url(conf):
         conf.runtime = metadata.runtime_string
     ld("conf.runtime", conf.runtime)
 
+    conf.date = metadata.date_utc
+    ld("conf.date", conf.date)
+
     conf.description = metadata.description
     ld("conf.description", conf.description)
 
@@ -235,6 +247,57 @@ def write_xml(conf):
     tree.write(conf.metadata_xml, encoding="utf-8", xml_declaration=True)
 
 
+def get_metadata(args, conf):
+    def make_backup():
+        try:
+            shutil.copyfile(conf.metadata_xml, "{}.bak".format(conf.metadata_xml))
+            ld("Copied {} to {}.".format(conf.metadata_xml, "{}.bak".format(conf.metadata_xml)))
+        except FileNotFoundError:
+            pass
+
+    #default metadata.xml that could/should exist:
+    conf.metadata_xml = os.path.join(args.input_folder, "metadata.xml")
+
+    #check if an xml file already exists (this takes precedence):
+    if os.path.exists(conf.metadata_xml):
+        print("A metadata.xml file found.")
+
+        if lib_utils.yn_query("Would you like to use that?"):
+            parse_xml(conf)
+            return
+
+    #get metadata from either xml file or url:
+    if args.input_xml:
+        make_backup()
+
+        #the xml file could have an abs path or just a filename:
+        if not os.path.exists(args.input_xml):
+            #try to locate the file inside input_folder
+            #errors are handled by parse_xml
+            conf.metadata_xml = os.path.join(conf.input_folder, args.input_xml)
+        else:
+            conf.metadata_xml = args.input_xml
+        ld("conf.metadata_xml", conf.metadata_xml)
+
+        parse_xml(conf)
+        #reset path to default xml path:
+        conf.metadata_xml = os.path.join(args.input_folder, "metadata.xml")
+        #write all data to the default xml leaving input_xml intact:
+        write_xml(conf)
+        return
+
+    elif args.url:
+        conf.url = args.url
+        ld("conf.url", conf.url)
+
+        parse_url(conf)
+
+        make_backup()
+
+        write_xml(conf)
+        return
+
+
 def main(argv):
     ld("argv", argv)
 
@@ -245,83 +308,63 @@ def main(argv):
     args = lib_argparse.parser(program_version_message)
     ld(args)
 
-    if args.verbose:
-        set_log_level('debug')
-
     #initialize class to hold configuration:
     conf = config.Config()
 
     #parse arguments:
+    #check verbose/debug mode:
+    if args.verbose or DEBUG:
+        conf.debug = True
+        set_log_level('debug')
+
     #get folder contents:
     conf.input_folder = args.input_folder
     try:
         folder_contents = lib_tree.Parse(conf.input_folder)
         ld("folder_contents", folder_contents)
     except lib_exceptions.FolderNotFound as err:
-        lc("Cannot find folder!")
+        lc(err.msg)
 
     conf.audio_files = folder_contents.audio_files
-    ld("conf.audio_files", conf.audio_files)
+    ld("conf.audio_files", conf.audio_files) #TODO: check if audio files present
 
     conf.cover = folder_contents.cover
     ld("conf.cover", conf.cover)
-
     if not conf.cover:
         lw("No cover files specified or found. No artwork will be used.")
 
-    #default metadata.xml that could/should exist:
-    conf.metadata_xml = os.path.join(args.input_folder, "metadata.xml")
-
-    #get metadata from either xml file or url:
-    if args.input_xml:
-        conf.metadata_xml = args.input_xml
-        ld("conf.metadata_xml", conf.metadata_xml)
-
-        try:
-            shutil.copyfile(conf.metadata_xml, "{}.bak".format(conf.metadata_xml))
-            #shutil.move(conf.metadata_xml, "{}.bak".format(conf.metadata_xml))
-        except FileNotFoundError:
-            pass
-
-        parse_xml(conf)
-
-    #check if an xml file already exists:
-    if os.path.exists(conf.metadata_xml):
-        li("A metadata.xml file found.")
-
-        if lib_utils.yn_query("Would you like to use that?"):
-            parse_xml(conf) #TODO: malformed xml
-
-        #TODO: add a --force option
-        elif args.url:
-            conf.url = args.url
-            ld("conf.url", conf.url)
-            parse_url(conf)
-
-            #write metadata to an xml file:
-            write_xml(conf)
-
-        else:
-            le("No URL specified.")
-            raise SystemExit(1)
-
-    elif args.url:
-        conf.url = args.url
-        ld("conf.url", conf.url)
-        parse_url(conf)
-        write_xml(conf)
+    get_metadata(args, conf)
 
     #simple text editor to display and edit metadata:
     lib_editor.Editor(conf)
 
+    #set metadata for each audio file:
+    track_no = 0
+    files_with_tags = list()
+    for file in conf.audio_files:
+        track_no += 1
+        file_tags = {"file":         file,
+                     "cover":        conf.cover,
+                     "title":        conf.title_full(track=track_no),
+                     "sort_title":   conf.title_sort,
+                     "artist":       "{} (read by {})".format(conf.authors_string, conf.narrators_string),
+                     "album_artist": conf.authors_string,
+                     "album":        conf.series_title or conf.title,
+                     "track_no":     track_no,
+                     "total_no":     len(conf.audio_files),
+                     "disk_no":      conf.series_position,
+                     "year":         conf.date,
+                     "description":  conf.description,
+                     "copyright":    conf.copyright
+                     }
+        files_with_tags.append(file_tags)
+
+    #replace previous audio files with the full dict:
+    conf.audio_files = files_with_tags
+    ld(conf.audio_files)
+
 if __name__ == "__main__":
-    if DEBUG:
-        setup_logging()
-        set_log_level('debug')
-        sys.argv.append('-v')
-    else:
-        setup_logging()
-        set_log_level('error')
+    setup_logging()
 
     try:
         sys.exit(main(sys.argv))

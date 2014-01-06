@@ -23,7 +23,7 @@ class Parse:
         self._folder = folder
         self._file_list = list()
         self._audio_files = list()
-        self.audio_extensions = [".m4a", ".aac", ".m4b"]
+        self.audio_extensions = [".m4a"]
         self._cover = str()
         self.cover_extensions = [".png", ".jpg", ".jpeg"]
         self._metadata_xml = str()
@@ -82,7 +82,7 @@ class Parse:
             #sort the list of files alphabetically:
             self._file_list.sort()
         else:
-            raise lib_exceptions.FolderNotFound("Cannot find folder!") from None
+            raise lib_exceptions.FolderNotFound("Cannot find folder") from None
 
     @property
     def audio_files(self):

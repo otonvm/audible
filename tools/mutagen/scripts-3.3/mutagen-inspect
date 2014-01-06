@@ -1,0 +1,48 @@
+#!/usr/local/opt/python3/bin/python3.3
+# -*- coding: utf-8 -*-
+
+# Full tag list for any given file.
+# Copyright 2005 Joe Wreschnig
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of version 2 of the GNU General Public License as
+# published by the Free Software Foundation.
+#
+# Modified for Python 3 by Ben Ockmore <ben.sput@gmail.com>
+
+from __future__ import print_function, absolute_import, division
+
+import sys
+import locale
+
+from optparse import OptionParser
+
+
+def main(argv):
+    from mutagenx import File
+
+    parser = OptionParser()
+    parser.add_option("--no-flac", help="Compatibility; does nothing.")
+    parser.add_option("--no-mp3", help="Compatibility; does nothing.")
+    parser.add_option("--no-apev2", help="Compatibility; does nothing.")
+
+    (options, args) = parser.parse_args(argv[1:])
+    if not args:
+        raise SystemExit(parser.print_help() or 1)
+
+    enc = locale.getpreferredencoding()
+    for filename in args:
+        print("--%s" % filename)
+        try:
+            print ("- " + File(filename).pprint()).encode(enc, 'replace')
+        except AttributeError:
+            print "- Unknown file type".encode(enc, 'replace')
+        except KeyboardInterrupt:
+            raise
+        except Exception, err:
+            print(str(err).encode(enc, 'replace'))
+        print
+
+
+if __name__ == "__main__":
+    main(sys.argv)
