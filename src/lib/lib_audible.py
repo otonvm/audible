@@ -62,7 +62,8 @@ class Metadata:
     def _load_soup(self, path, url):
         soup_dmp_path = os.path.join(path, "soup.dmp")
         if os.path.exists(soup_dmp_path):
-            soup_dmp = lib_utils.load_pickle(path)
+            #soup_dmp = lib_utils.load_pickle(path)
+            soup_dmp = None
             try:
                 if soup_dmp[0] == url:
                     self._soup = soup_dmp[1]
@@ -81,9 +82,7 @@ class Metadata:
 
     def _write_soup(self, path, url):
         soup_dmp = (url, self._soup)
-        lib_utils.dump_pickle(os.path.join(path, "soup.dmp"), soup_dmp)
-        log("written soup")
-        print("written soup", file=sys.stderr)
+        #lib_utils.dump_pickle(os.path.join(path, "soup.dmp"), soup_dmp)
 
     def _http_download(self, url, path=None):
         try:
@@ -289,12 +288,9 @@ class Metadata:
 
     @staticmethod
     def is_url_valid(url):
-        exp = re.compile('^http://www.audible.com/pd/')
-        match = re.match(exp, url)
-
-        if match:
-            return True
-        else:
+        try:
+            return url.startswith("http://www.audible.com/pd/")
+        except:
             return False
 
     def local_html(self, html_file):

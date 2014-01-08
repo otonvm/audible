@@ -9,6 +9,7 @@ import os
 import sys
 import shutil
 import xml.etree.ElementTree as ET
+import os.path
 
 try:
     import lib.lib_argparse as lib_argparse
@@ -34,6 +35,7 @@ def lw(*args): pass
 def le(*args): pass
 def lc(*args):
     raise SystemExit(1)
+
 
 def setup_logging():
     if 'sys' not in locals().keys():
@@ -98,16 +100,6 @@ def setup_logging():
             logger.critical(msg, extra={'true_lineno': lineno, 'true_func': func})
             raise SystemExit(1)
 
-    else:
-        #define backup shorthand functions:
-        def set_log_level(*args): pass
-        def ld(*args): pass
-        def li(*args): pass
-        def lw(*args): pass
-        def le(*args): pass
-        def lc(*args):
-            raise SystemExit(1)
-
 
 def parse_xml(conf):
     try:
@@ -156,7 +148,7 @@ def parse_url(conf):
     metadata = lib_audible.Metadata()
 
     try:
-        metadata.http_page(conf.url)
+        metadata.http_page(conf.url, conf.input_folder)
     except lib_exceptions.URLException as err:
         lc(err.msg)
     except lib_exceptions.HTTPException as err:
@@ -326,7 +318,7 @@ def main(argv):
         lc(err.msg)
 
     conf.audio_files = folder_contents.audio_files
-    ld("conf.audio_files", conf.audio_files) #TODO: check if audio files present
+    ld("conf.audio_files", conf.audio_files)  # TODO: check if audio files present
 
     conf.cover = folder_contents.cover
     ld("conf.cover", conf.cover)
