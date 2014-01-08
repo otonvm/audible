@@ -43,6 +43,3 @@ class MP4Box:
         self._test_bin_works()
         self._tested = True
         return
-
-
-

@@ -4,6 +4,7 @@ import os
 import sys
 import subprocess
 import platform
+import pickle
 
 import lib.lib_mux as lib_mux
 
@@ -14,6 +15,10 @@ if platform.system() == "Windows":
 else:
     mp4boxbin = os.path.abspath(__file__)[:-22]
     mp4boxbin = os.path.join(mp4boxbin, "tools/mac/MP4Box")
+
+with open("tests/mp4box_output.pkl", mode='rb') as file:
+    mp4box_output = pickle.load(file)
+
 
 class Test(unittest.TestCase):
     def test_bin_found(self):
@@ -34,6 +39,16 @@ class Test(unittest.TestCase):
             cls._cmd = [sys.executable, "-c", "raise SystemExit(1)"]
             cls._test_bin_works()
 
+    def test_bin_working(self):
+        cls = lib_mux.MP4Box()
+        cls.set_path(mp4boxbin)
+        cls._test_bin()
+        self.assertTrue(cls._tested)
 
+    def test_bin_working_output(self):
+        cls = lib_mux.MP4Box()
+        cls.set_path(mp4boxbin)
+        cls._test_bin()
+        self.assertEqual(cls._bin_test_output, mp4box_output)
 if __name__ == "__main__":
     unittest.main()
