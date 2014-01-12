@@ -1,0 +1,7 @@
+
+
+--output /Users/Oton/Desktop/test-tagged.m4b
+
+MP4Box -brand "M4B " -ab mp71 -ipod -add "/Users/Oton/Desktop/test.aac:name=Part 1:lang=eng" -v /Users/Oton/Desktop/test.m4b
+
+MP4Box -raw 1 /Users/Oton/Downloads/Kingkiller\ Chronicles/Book\ 1/Part\ 1.m4a -out /Users/Oton/Desktop/test.aac

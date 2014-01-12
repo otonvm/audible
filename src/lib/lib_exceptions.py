@@ -32,3 +32,15 @@ class FolderNotFound(Exception):
     def __init__(self, msg):
         super().__init__(msg)
         self.msg = msg
+
+
+class MP4BoxError(Exception):
+    def __init__(self, msg):
+        super().__init__(msg)
+        self.msg = msg
+
+
+class APError(Exception):
+    def __init__(self, msg):
+        super().__init__(msg)
+        self.msg = msg

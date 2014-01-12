@@ -5,8 +5,10 @@ import os
 import pickle
 import platform
 
+
 def get_input(message):
     return input(message).strip().lower()
+
 
 def yn_query(message):
     while True:
@@ -21,11 +23,13 @@ def yn_query(message):
             continue
     return answer
 
+
 def clear():
     if platform.system() == 'Windows':
         os.system("cls")
     elif platform.system() == 'Darwin':
         os.system("clear")
+
 
 def load_pickle(path):
     try:
@@ -33,6 +37,7 @@ def load_pickle(path):
             return pickle.load(file)
     except (pickle.UnpicklingError, OSError):
         return None
+
 
 def dump_pickle(path, obj):
     try:

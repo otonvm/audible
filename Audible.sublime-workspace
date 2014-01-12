@@ -4,30 +4,143 @@
 		"selected_items":
 		[
 			[
+				"track",
+				"track_no"
+			],
+			[
+				"au",
+				"audio_files"
+			],
+			[
+				"lib",
+				"lib_mux"
+			],
+			[
+				"main",
+				"main_path"
+			],
+			[
+				"too",
+				"tools_path"
+			],
+			[
+				"_",
+				"_cmd"
+			],
+			[
+				"std",
+				"stderr	statement"
+			],
+			[
+				"otu",
+				"output"
+			],
+			[
+				"sys",
+				"system	function"
+			],
+			[
+				"System",
+				"SystemExit	class"
+			],
+			[
+				"Sys",
+				"SystemExit	class"
+			],
+			[
+				"de",
+				"decode"
+			],
+			[
+				"is",
+				"isinstance	function"
+			],
+			[
+				"out",
+				"output	statement"
+			],
+			[
+				"readli",
+				"readlines	function"
+			],
+			[
+				"re",
+				"readlines	function"
+			],
+			[
+				"pro",
+				"proc	statement"
+			],
+			[
+				"_pro",
+				"_progress_bar_init	function"
+			],
+			[
+				"pr",
+				"print	function"
+			],
+			[
+				"rea",
+				"read	function"
+			],
+			[
+				"st",
+				"stdout	statement"
+			],
+			[
+				"max",
+				"maxread	param"
+			],
+			[
+				"se",
+				"self	param"
+			],
+			[
+				"s",
+				"stdout	statement"
+			],
+			[
+				"file",
+				"_file_name	statement"
+			],
+			[
+				"_te",
+				"_test_bin	function"
+			],
+			[
+				"_file",
+				"_file_path	statement"
+			],
+			[
+				"spli",
+				"splitext	function"
+			],
+			[
+				"sp",
+				"split	import"
+			],
+			[
 				"pa",
 				"path	import"
+			],
+			[
+				"mp4",
+				"mp4box"
 			]
 		]
 	},
-	"buffers":
-	[
-		{
-			"file": "tests/test_lib_mux.py",
-			"settings":
-			{
-				"buffer_size": 1087,
-				"line_ending": "Unix"
-			}
-		}
-	],
 	"build_system": "Packages/User/Python3.sublime-build",
 	"command_palette":
 	{
-		"height": 107.0,
+		"height": 380.0,
 		"selected_items":
 		[
 			[
 				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"isnta",
 				"Package Control: Install Package"
 			],
 			[
@@ -47,7 +160,7 @@
 				"Package Control: Install Package"
 			]
 		],
-		"width": 521.0
+		"width": 536.0
 	},
 	"console":
 	{
@@ -68,6 +181,18 @@
 	},
 	"file_history":
 	[
+		"/Users/Oton/Dropbox/Code/Eclipse_Win/Audible/Audible.sublime-project",
+		"/Users/Oton/Library/Application Support/Sublime Text 3/Packages/GitGutter/GitGutter.sublime-settings",
+		"/Users/Oton/Library/Application Support/Sublime Text 3/Packages/User/sublime_jedi.sublime-settings",
+		"/Users/Oton/Library/Application Support/Sublime Text 3/Packages/Jedi - Python autocompletion/sublime_jedi.sublime-settings",
+		"/D/Apps/Python3/lib/subprocess.py",
+		"/D/Apps/Sublime Text/Data/Packages/User/Python3.sublime-build",
+		"/D/Apps/Sublime Text/Data/Packages/HighlightWhitespaces/highlight_whitespaces.sublime-settings",
+		"/D/Apps/Sublime Text/Data/Packages/Git/Git.sublime-settings",
+		"/D/Apps/Sublime Text/Data/Packages/User/Side Bar.sublime-settings",
+		"/D/Apps/Sublime Text/Data/Packages/SideBarEnhancements/Side Bar.sublime-settings",
+		"/D/Dropbox/Code/Eclipse_Win/Audible/.codeintel/config",
+		"/D/Apps/Sublime Text/Data/Packages/User/SublimeLinter.sublime-settings",
 		"/Users/Oton/Desktop/Audible.sublime-project",
 		"/Users/Oton/Desktop/Audible/src/audible_tag.py",
 		"/Users/Oton/Desktop/Audible/.pylintrc",
@@ -80,8 +205,6 @@
 		"/Users/Oton/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
 		"/Users/Oton/Library/Application Support/Sublime Text 3/Packages/User/SublimeCodeIntel.sublime-settings",
 		"/Users/Oton/Library/Application Support/Sublime Text 3/Packages/SublimeCodeIntel/SublimeCodeIntel.sublime-settings",
-		"/Users/Oton/Library/Application Support/Sublime Text 3/Packages/User/sublime_jedi.sublime-settings",
-		"/Users/Oton/Library/Application Support/Sublime Text 3/Packages/Jedi - Python autocompletion/sublime_jedi.sublime-settings",
 		"/Users/Oton/Library/Application Support/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
 		"/Users/Oton/Library/Application Support/Sublime Text 3/Packages/SublimeCodeIntel/Default (OSX).sublime-keymap",
 		"/Users/Oton/Library/Application Support/Sublime Text 3/Packages/SublimePythonIDE/SublimePython.sublime-settings",
@@ -117,96 +240,13 @@
 		"whole_word": false,
 		"wrap": true
 	},
-	"groups":
-	[
-		{
-			"selected": 0,
-			"sheets":
-			[
-				{
-					"buffer": 0,
-					"file": "tests/test_lib_mux.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1087,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								367,
-								367
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close"
-							],
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				}
-			]
-		}
-	],
 	"incremental_find":
 	{
 		"height": 23.0
 	},
 	"input":
 	{
-		"height": 0.0
+		"height": 31.0
 	},
 	"layout":
 	{
@@ -217,11 +257,18 @@
 				0,
 				1,
 				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
 			]
 		],
 		"cols":
 		[
 			0.0,
+			0.359628770302,
 			1.0
 		],
 		"rows":
@@ -231,15 +278,18 @@
 		]
 	},
 	"menu_visible": true,
+	"output.anaconda_documentation":
+	{
+		"height": 244.0
+	},
 	"output.exec":
 	{
-		"height": 335.0
+		"height": 266.0
 	},
 	"output.find_results":
 	{
 		"height": 0.0
 	},
-	"project": "Audible.sublime-project",
 	"replace":
 	{
 		"height": 42.0
@@ -276,7 +326,7 @@
 	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 150.0,
+	"side_bar_width": 196.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{

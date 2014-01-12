@@ -12,16 +12,25 @@ import lib.lib_mux as lib_mux
 if platform.system() == "Windows":
     mp4boxbin = os.path.abspath(__file__)[:-22]
     mp4boxbin = os.path.join(mp4boxbin, "tools\win\mp4box.exe")
+    mp4boxpkl = "tests/mp4box_output_win.pkl"
 else:
     mp4boxbin = os.path.abspath(__file__)[:-22]
     mp4boxbin = os.path.join(mp4boxbin, "tools/mac/MP4Box")
+    mp4boxpkl = "tests/mp4box_output_mac.pkl"
 
-with open("tests/mp4box_output.pkl", mode='rb') as file:
+with open(mp4boxpkl, mode='rb') as file:
     mp4box_output = pickle.load(file)
 
 
 class Test(unittest.TestCase):
+
     def test_bin_found(self):
+        cls = lib_mux.MP4Box()
+        with self.assertRaises(FileNotFoundError):
+            cls.set_path("none")
+            cls._test_bin_exists()
+
+    def test_bin_found2(self):
         cls = lib_mux.MP4Box()
         with self.assertRaises(FileNotFoundError):
             cls.set_path("none")
@@ -50,5 +59,6 @@ class Test(unittest.TestCase):
         cls.set_path(mp4boxbin)
         cls._test_bin()
         self.assertEqual(cls._bin_test_output, mp4box_output)
+
 if __name__ == "__main__":
     unittest.main()

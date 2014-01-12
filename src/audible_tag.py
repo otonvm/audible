@@ -8,6 +8,7 @@ __updated__ = "29.12.2013"
 import os
 import sys
 import shutil
+import platform
 import xml.etree.ElementTree as ET
 import os.path
 
@@ -18,6 +19,8 @@ try:
     import lib.lib_exceptions as lib_exceptions
     import lib.lib_utils as lib_utils
     import lib.lib_editor as lib_editor
+    import lib.lib_mux as lib_mux
+    import lib.lib_tag as lib_tag
     import config
 except ImportError as err:
     print("Cannot start module {}".format(__file__), file=sys.stderr)
@@ -354,6 +357,38 @@ def main(argv):
     #replace previous audio files with the full dict:
     conf.audio_files = files_with_tags
     ld(conf.audio_files)
+
+    #setup paths for binary tools:
+    main_path = os.path.split(os.path.abspath(__file__))[0]
+    if platform.system() == "Windows":
+        tools_path = os.path.join(main_path, "tools\win")
+        mp4box_path = os.path.join(tools_path, "MP4Box.exe")
+        ap_path = os.path.join(tools_path, "AtomicParsley.exe")
+    else:
+        tools_path = os.path.join(main_path, "tools/mac")
+        mp4box_path = os.path.join(tools_path, "MP4Box")
+        ap_path = os.path.join(tools_path, "AtomicParsley")
+    ld("main_path", main_path)
+    ld("tools_path", tools_path)
+    ld("mp4box_path", mp4box_path)
+    ld("ap_path", ap_path)
+
+    #for each file in the list of files to process
+    #first prepare the blank file to tag (remux),
+    #then tag with given metadata:
+    mux = lib_mux.MP4Box(mp4box_path)
+    tag = lib_tag.APTagger(ap_path)
+
+    for file_data in conf.audio_files:
+        try:
+            if mux.remux(file_data["file"], file_data["track_no"]):
+                tag.tag(file_data)
+        except FileNotFoundError as err:
+            lc(err)
+        except lib_exceptions.MP4BoxError as err:
+            lc(err)
+
+
 
 if __name__ == "__main__":
     setup_logging()
