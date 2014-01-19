@@ -1,9 +1,9 @@
-#! python3
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 # pylint: disable=fixme, line-too-long, global-variable-not-assigned
 
-__version__ = "0.3"
-__updated__ = "29.12.2013"
+__version__ = "1.0"
+__updated__ = "14.1.2014"
 
 import os
 import sys
@@ -27,7 +27,7 @@ except ImportError as err:
     print("Reason: {}".format(err.msg), file=sys.stderr)
     raise SystemExit(1)
 
-DEBUG = 1
+DEBUG = 0
 
 
 #define global names for logging:
@@ -359,7 +359,7 @@ def main(argv):
     ld(conf.audio_files)
 
     #setup paths for binary tools:
-    main_path = os.path.split(os.path.abspath(__file__))[0]
+    main_path = os.path.split(os.path.realpath(__file__))[0]
     if platform.system() == "Windows":
         tools_path = os.path.join(main_path, "tools\win")
         mp4box_path = os.path.join(tools_path, "MP4Box.exe")
@@ -376,18 +376,24 @@ def main(argv):
     #for each file in the list of files to process
     #first prepare the blank file to tag (remux),
     #then tag with given metadata:
-    mux = lib_mux.MP4Box(mp4box_path)
-    tag = lib_tag.APTagger(ap_path)
-
     for file_data in conf.audio_files:
+        #create a separate instance of each class for each file
+        #this way all command line arguments and subprocess instances are separated:
+        mux = lib_mux.MP4Box(mp4box_path)
+        tag = lib_tag.APTagger(ap_path)
+
         try:
             if mux.remux(file_data["file"], file_data["track_no"]):
-                tag.tag(file_data)
+                if tag.tag(file_data):
+                    print("Finished tagging file: {}".format(file_data["file"]))
+                    #remove class instances:
+                    del mux
+                    del tag
         except FileNotFoundError as err:
             lc(err)
         except lib_exceptions.MP4BoxError as err:
             lc(err)
-
+    print("Done!")
 
 
 if __name__ == "__main__":

@@ -89,6 +89,7 @@ class MP4Box:
             proc = subprocess.Popen(self._cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
 
             if display_progress:
+                print()
                 print("Demux:")
                 print("-" * bar_width)
                 self._progress_bar_init(width=bar_width)
@@ -141,6 +142,7 @@ class MP4Box:
             if display_progress:
                 self._progress_bar = None
                 self._progress_bar_init(width=bar_width)
+                print()
                 print("Remuxing file:")
                 print("-" * bar_width)
 
@@ -158,22 +160,25 @@ class MP4Box:
                             number = int(line[start_index:stop_index])
                             if number >= 0 and number < 95:
                                 self._progress_bar_update(number)
+                            #hack for ignoring remuxing phase
+                            #it's usually so fast that it doesn't really matter
                             elif number >= 95:
                                 self._progress_bar_update(100)
-                                imported = True
+                                imported = True  # break the while loop
                             else:
                                 self._progress_bar_update(0)
                         except ValueError:
                             pass
                     else:
                         self._progress_bar_update(100)
-                return proc.poll()
+                proc.communicate()  # needed to deblock the process
+                return proc.wait()
             else:
                 output = proc.communicate()[1].decode('utf-8').strip()
                 if "Error" in output:
                     error = output.split(': ')[1]
                     raise lib_exceptions.MP4BoxError(error)
-                return proc.poll()
+                return proc.wait()
         except:
             raise
 
@@ -181,8 +186,8 @@ class MP4Box:
         self._file_path, self._file_name = os.path.split(file)
         self._file_name = os.path.splitext(self._file_name)[0]
 
-        self._aac_file = "{}.aac".format(os.path.join(self._file_path, self._file_name))
-        self._m4b_file = "{}.m4b".format(os.path.join(self._file_path, self._file_name))
+        self._aac_file = r"{}_demux.aac".format(os.path.join(self._file_path, self._file_name))
+        self._m4b_file = r"{}_temp.m4b".format(os.path.join(self._file_path, self._file_name))
 
         if not isinstance(part_no, int):
             raise TypeError("part_no must be of type int")
@@ -192,8 +197,14 @@ class MP4Box:
             raise TypeError("bar_width must be of type int")
 
         if self._demux(file, display_progress, bar_width) == 0:
-            self._remux(part_no, display_progress, bar_width)
-            return True
+            if self._remux(part_no, display_progress, bar_width) == 0:
+                self._delete(self._aac_file)
+                return True
+            else:
+                self._delete(self._aac_file)
+                self._delete(self._m4b_file)
+                return False
         else:
             self._delete(self._aac_file)
+            self._delete(self._m4b_file)
             return False

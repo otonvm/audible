@@ -21,6 +21,7 @@ class Parse:
 
     def __init__(self, folder):
         self._folder = folder
+
         self._file_list = list()
         self._audio_files = list()
         self.audio_extensions = [".m4a"]
@@ -40,7 +41,7 @@ class Parse:
 
     def _glob_folder(self):
         for file in os.listdir(self._folder):
-            self._file_list.append(file)
+            self._file_list.append(os.path.join(self._folder, file))
 
     def _get_audio_files(self):
         #create a new list of audio files if their extension is in a predefined list:

@@ -258,6 +258,7 @@ class Metadata:
         self._copyright = self._content_div_list[-1]
         self._copyright = re.sub(r'\s\(P\)', '; Ⓟ', self._copyright)
         self._copyright = re.sub(r';;', ';', self._copyright)
+        
 
 
 #---PUBLIC METHODS:
