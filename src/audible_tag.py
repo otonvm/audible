@@ -151,7 +151,7 @@ def parse_url(conf):
     metadata = lib_audible.Metadata()
 
     try:
-        metadata.http_page(conf.url, conf.input_folder)
+        metadata.http_page(url=conf.url, path=conf.input_folder)
     except lib_exceptions.URLException as err:
         lc(err.msg)
     except lib_exceptions.HTTPException as err:
@@ -163,7 +163,12 @@ def parse_url(conf):
         conf.title = metadata.title
     except lib_exceptions.RegExException as err:
         lw("Error parsing title. {}".format(err.msg))
+
+    try:
         conf.title = metadata.title_raw
+    except lib_exceptions.RegExException as err:
+        lw("Error parsing title. {}".format(err.msg))
+        conf.title = None
     ld("conf.title", conf.title)
 
     conf.authors = metadata.authors
@@ -321,7 +326,7 @@ def main(argv):
         lc(err.msg)
 
     conf.audio_files = folder_contents.audio_files
-    ld("conf.audio_files", conf.audio_files)  # TODO: check if audio files present
+    ld("conf.audio_files", conf.audio_files) # TODO: check if audio files present
 
     conf.cover = folder_contents.cover
     ld("conf.cover", conf.cover)

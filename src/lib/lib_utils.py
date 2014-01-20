@@ -34,7 +34,7 @@ def clear():
 def load_pickle(path):
     try:
         with open(path, mode='rb') as file:
-            return pickle.load(file)
+            return pickle.load(file, encoding='utf-8')
     except (pickle.UnpicklingError, OSError):
         return None
 

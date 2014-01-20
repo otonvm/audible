@@ -1,5 +1,6 @@
 #! python3
 # -*- coding: utf-8 -*-
+# pylint: disable=fixme, line-too-long, global-variable-not-assigned, missing-docstring
 
 import re
 import os
@@ -22,7 +23,7 @@ except ImportError:
     raise ImportError("Unable to import BeautifulSoup!") from None
 
 try:
-    import html5lib  # used by bs, not needed directly
+    import html5lib # used by bs, not needed directly
 except ImportError:
     raise ImportError("Unable to import html5lib!") from None
 del html5lib
@@ -36,9 +37,10 @@ class Metadata:
     def __init__(self):
         #private variables:
         self._url = None
+        self._html = None
         self._soup = None
         self._title = None
-        self._title_raw = str()
+        self._title_raw = None
         self._author = None
         self._author_span = None
         self._narrator_span = None
@@ -55,62 +57,61 @@ class Metadata:
         self._copyright = None
 
 #---PRIVATE METHODS:
-    def _test_soup(self):
-        if not self._soup.body:
-            raise lib_exceptions.BS4Exception("Cannot parse document structure.")
+    def _load_html(self, path):
+        if os.path.isfile(path):
+            self._html = lib_utils.load_pickle(path)
+            return
 
-    def _load_soup(self, path, url):
-        soup_dmp_path = os.path.join(path, "soup.dmp")
-        if os.path.exists(soup_dmp_path):
-            #soup_dmp = lib_utils.load_pickle(path)
-            soup_dmp = None
-            try:
-                if soup_dmp[0] == url:
-                    self._soup = soup_dmp[1]
-                    log("loaded soup")
-                    return True
-                else:
-                    try:
-                        os.remove(soup_dmp_path)
-                    except:
-                        pass
-            except:
-                pass
-        else:
-            pass
-        return False
-
-    def _write_soup(self, path, url):
-        soup_dmp = (url, self._soup)
-        #lib_utils.dump_pickle(os.path.join(path, "soup.dmp"), soup_dmp)
+        if os.path.isdir(path):
+            html_dump = os.path.join(path, "page.pkl")
+            if os.path.exists(html_dump):
+                self._html = lib_utils.load_pickle(html_dump)
+                return
 
     def _http_download(self, url, path=None):
         try:
-            html = urllib.request.urlopen(url).read()
+            self._html = urllib.request.urlopen(url).read()
         except urllib.error.HTTPError as err:
             raise lib_exceptions.HTTPException("The server couldn't fulfill the request, \
                                             reason: {}".format(err.code)) from None
         except urllib.error.URLError as err:
             raise lib_exceptions.URLException("Failed to reach server, reason: {}".format(err.reason)) from None
         else:
-            self._soup = BeautifulSoup(html, "html5lib")
-            self._test_soup()
+            if path is not None:
+                if os.path.isdir(path):
+                    html_dump = os.path.join(path, "page.pkl")
+                    lib_utils.dump_pickle(html_dump, self._html)
+                    return
+                else:
+                    raise ValueError("path must be a folder") from None
+
+    def _test_soup(self):
+        if self._soup.body is None or len(self._soup.body) == 0:
+            raise lib_exceptions.BS4Exception("Cannot parse document structure.") from None
+        return
 
     def _local_file(self, file_path):
         try:
             with open(file_path, encoding='utf-8') as file:
                 self._soup = BeautifulSoup(file, "html5lib")
                 self._test_soup()
+                return
         except FileExistsError:
             raise lib_exceptions.FileError("Requested file inaccessible or already open.") from None
         except OSError:
             raise lib_exceptions.FileError("Could not open requested file.") from None
 
+    def _create_soup(self):
+        if self._html is not None:
+            self._soup = BeautifulSoup(self._html, "html5lib")
+            self._test_soup()
+        return
+
     def _set_title_raw(self):
         self._title_raw = self._soup.find('h1', {'class': 'adbl-prod-h1-title'}).string.strip()
 
     def _set_title(self):
-        if not self._title_raw:
+        if self._title_raw is None:
             self._set_title_raw()
 
         title_regex = re.search(r"^([\w\s']+)", self._title_raw)
@@ -125,7 +126,7 @@ class Metadata:
         self._author_span = self._author_span.find('span', {'class': 'adbl-prod-author'})
 
     def _parse_author_span(self):
-        if not self._author_span:
+        if self._author_span is None:
             self._set_author_span()
 
         #get all text from div and create list:
@@ -143,7 +144,7 @@ class Metadata:
         self._narrator_span = self._narrator_span.find('span', {'class': 'adbl-prod-author'})
 
     def _parse_narrator_span(self):
-        if not self._narrator_span:
+        if self._narrator_span is None:
             self._set_narrator_span()
 
         #get all text from div and create list:
@@ -175,7 +176,7 @@ class Metadata:
             self._series_tuple = None
 
     def _set_series_tuple_from_title(self):
-        if not self._title_raw:
+        if self._title_raw is None:
             self._set_title_raw()
 
         exp = re.compile(r"^[\w\s]+:\s([\w\s']+),\sBook\s(\d)$")
@@ -193,7 +194,7 @@ class Metadata:
         self._runtime = self._soup.find('span', {'class': 'adbl-run-time'}).string.strip()
 
     def _regex_runtime(self):
-        if not self._runtime:
+        if self._runtime is None:
             self._set_runtime()
 
         #match string like:
@@ -224,7 +225,7 @@ class Metadata:
         self._date_span = self._soup.find('span', {"class": "adbl-date adbl-release-date"})
 
     def _set_date(self):
-        if not self._date_span:
+        if self._date_span is None:
             self._set_date_span()
 
         date_text = self._date_span.text.strip()
@@ -235,7 +236,7 @@ class Metadata:
         self._content_div = self._soup.find('div', {"class": "adbl-content"})
 
     def _parse_content_div(self):
-        if not self._content_div:
+        if self._content_div is None:
             self._set_content_div()
 
         #get all text from div and create list:
@@ -258,11 +259,12 @@ class Metadata:
         self._copyright = self._content_div_list[-1]
         self._copyright = re.sub(r'\s\(P\)', '; Ⓟ', self._copyright)
         self._copyright = re.sub(r';;', ';', self._copyright)
-        
+
 
 
 #---PUBLIC METHODS:
     def reset(self):
+        self._html = None
         self._soup = None
 
     def http_page(self, url, path=None):
@@ -274,25 +276,26 @@ class Metadata:
         """
         if self.is_url_valid(url):
             #no soup object exists:
-            if not self._soup:
+            if self._soup is None:
                 #a path was provided and loading from pickle worked:
-                if path and self._load_soup(path, url):
+                if path is not None and self._load_html(path):
                     pass #we're done
                 else:
-                    #no data available so it has to be downloaded:
-                    self._http_download(url)
-                    if path: #a path was provided so a backup can be made
-                        self._write_soup(path, url)
+                    #no data available so it has to be downloaded
+                    #if path is provided a backup will be made:
+                    self._http_download(url, path)
+                #parse the html:
+                self._create_soup()
+                print("<----------------->")
+
         else:
             raise lib_exceptions.URLException("{} provided is invalid. \
                                            It has to be in the form of http://www.audible.com/pd/*")
 
     @staticmethod
     def is_url_valid(url):
-        try:
-            return url.startswith("http://www.audible.com/pd/")
-        except:
-            return False
+        return url.startswith("http://www.audible.com/pd/") or \
+                url.startswith("http://www.audible.co.uk/pd/")
 
     def local_html(self, html_file):
         if not self._soup:
